@@ -52,10 +52,10 @@ app.clearMessages = function () {
 };
 
 app.addMessage = function (messageAdded) {
-  $('#chats').append("<div id='message'>" + messageAdded.text + "</div>");
-  $('#main').append("<div class='username' href='#'> " + messageAdded.username + "</div>");
+  $('#chats').append("<div id='message'>Message: " + messageAdded.text + "</div>");
+  $('#chats').append("<div class='username' href='#'>Username: " + messageAdded.username + "</div>");
   // $('#chats').append("<div>" + messageAdded + "</div>");
-
+  this.init();
 };
 
 app.addRoom = function (room) {
