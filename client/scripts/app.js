@@ -3,10 +3,13 @@ var app = {
   server: 'https://api.parse.com/1/classes/chatterbox'
 }; 
 app.init = function (){
+    this.fetch();
     $(".username").on('click', this.addFriend);
     $("#send .submit").on('submit', this.handleSubmit);
-    // $('#refreshButton').on('click',this.fetch);
-
+    // $(' .userClick').on('click', function(){
+    //   console.log('this', this);
+    //   $(this).append("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
+    // })
 };
 
 app.send = function (message){
@@ -19,7 +22,7 @@ app.send = function (message){
     contentType: 'application/json',
     success: function (data) {
       app.addMessage(message);
-      debugger;
+      // debugger;
 
       console.log('chatterbox: Message sent');
       console.log('chatterbox', data);
@@ -39,13 +42,14 @@ app.fetch = function(){
     // This is the url you should use to communicate with the parse API server.
     url: this.server,
     type: 'GET',
-    //data: JSON.parse(),
+    // data: JSON.parse(),
     contentType: 'application/json',
+    dataType: 'json',
     success: function (data,status, jqxhr) {
 /*      console.log('chatterbox: Request sent');
       console.log('data', data);
-*/      var userResultsArray = data.results;
-debugger;
+*/    var userResultsArray = data.results;
+      // debugger;
       for (var i = 0; i < userResultsArray.length; i++) {
         if (userResultsArray[i].username !== undefined && userResultsArray[i].text !== undefined){
           // debugger; 
@@ -53,9 +57,10 @@ debugger;
         }
       }
     },
-    error: function (data) {
+    error: function (data, errorMessage) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-      console.error('chatterbox: Failed to send message');
+      console.error('chatterbox: Failed to fetch message');
+      console.log('errorMessage', errorMessage)
     }
   });
   // debugger;
@@ -69,9 +74,9 @@ app.clearMessages = function () {
 
 app.addMessage = function (messageAdded) {
   $('#chats').append("<div id='message'>Message: " + messageAdded.text + "</div>");
-  $('#chats').append("<div class='username' href='#'>Username: " + messageAdded.username + "</div>");
+  $('#chats').append("<div class='username'><a class ='userClick' href='#'>Username</a>: " + messageAdded.username + "</div>");
   // $('#chats').append("<div>" + messageAdded + "</div>");
-  this.init();
+  // this.init();
 };
 
 app.addRoom = function (room) {
@@ -89,7 +94,15 @@ app.handleSubmit = function() {
 };
 $(document).ready(function(){
   app.init();
-  setInterval(app.fetch(), 1000);
-// $('#refreshButton').on('click', app.fetch);
+
+  $('#refreshButton').on('click', function() {
+    app.fetch();
+  });
+
+  $('.userClick').on('click', function(){
+    console.log("this", this)
+    $(this).append("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
+  })
+
 });
 
