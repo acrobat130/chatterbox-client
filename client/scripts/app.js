@@ -3,8 +3,11 @@ var app = {
   server: 'https://api.parse.com/1/classes/chatterbox'
 }; 
 app.init = function (){
+    $(".username").on('click', app.addFriend);
+    $("#send .submit").on('submit', app.handleSubmit);
 
 };
+
 app.send = function (message){
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
@@ -49,7 +52,9 @@ app.clearMessages = function () {
 };
 
 app.addMessage = function (messageAdded) {
-  $('#chats').append("<div>" + messageAdded + "</div>");
+  $('#chats').append("<div id='message'>" + messageAdded.text + "</div>");
+  $('#main').append("<div class='username' href='#'> " + messageAdded.username + "</div>");
+  // $('#chats').append("<div>" + messageAdded + "</div>");
 
 };
 
@@ -57,4 +62,17 @@ app.addRoom = function (room) {
   $('#roomSelect').append("<div>" /*+ room + */ +"</div>");
 
 };
+
+app.addFriend = function(){
+  // return true; 
+  console.log("Defined adF")
+};
+
+app.handleSubmit = function() {
+
+};
+
+$(document).ready(function(){
+  app.init();
+});
 
