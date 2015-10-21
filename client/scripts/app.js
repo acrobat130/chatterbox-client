@@ -12,13 +12,13 @@ app.init = function (){
     // })
 };
 
-app.send = function (message){
+app.send = function (data){
   var thisInstance = this; 
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: this.server,
     type: 'POST',
-    data: JSON.stringify(message),
+    data: JSON.stringify(data),
     contentType: 'application/json',
     success: function (data) {
       app.addMessage(message);
@@ -64,17 +64,23 @@ app.fetch = function(){
     }
   });
   // debugger;
-
-
 };
 
 app.clearMessages = function () {
   $('#chats').children().remove()
 };
 
+app.makeHTMLelement = function(message) {
+  var $uName = $("<div class = 'username userClick'>").text(message.username);
+  var $uMessage = $("<div id = 'text'>").text(message.text);
+  var $fullMessage = $("<div class = 'message'>").append($uName, $uMessage);
+  return $fullMessage;
+}
+
 app.addMessage = function (messageAdded) {
-  $('#chats').append("<div id='message'>Message: " + messageAdded.text + "</div>");
-  $('#chats').append("<div class='username'><a class ='userClick' href='#'>Username</a>: " + messageAdded.username + "</div>");
+  var $HTMLelement = app.makeHTMLelement(messageAdded);
+  console.log("prepending");
+  $('#chats').prepend($HTMLelement);
   // $('#chats').append("<div>" + messageAdded + "</div>");
   // this.init();
 };
