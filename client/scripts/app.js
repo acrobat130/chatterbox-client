@@ -1,7 +1,7 @@
 // YOUR CODE HERE:
 var app = {
   server: 'https://api.parse.com/1/classes/chatterbox'
-}; 
+};
 app.init = function (){
     this.fetch();
     $(".username").on('click', this.addFriend);
@@ -13,7 +13,7 @@ app.init = function (){
 };
 
 app.send = function (data){
-  var thisInstance = this; 
+  var thisInstance = this;
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: this.server,
@@ -52,7 +52,7 @@ app.fetch = function(){
       // debugger;
       for (var i = 0; i < userResultsArray.length; i++) {
         if (userResultsArray[i].username !== undefined && userResultsArray[i].text !== undefined){
-          // debugger; 
+          // debugger;
           app.addMessage(userResultsArray[i]);
         }
       }
@@ -71,9 +71,10 @@ app.clearMessages = function () {
 };
 
 app.makeHTMLelement = function(message) {
-  var $uName = $("<div class = 'username userClick'>").text(message.username);
+  var $uName = $("<div class = 'username'>").append(
+      $("<a class = 'userClick' href = '#'>").text(message.username));
   var $uMessage = $("<div id = 'text'>").text(message.text);
-  var $fullMessage = $("<div class = 'message'>").append($uName, $uMessage);
+  var $fullMessage = $('#chats').append($uName, $uMessage);
   return $fullMessage;
 }
 
@@ -91,7 +92,7 @@ app.addRoom = function (room) {
 };
 
 app.addFriend = function(){
-  // return true; 
+  // return true;
   console.log("Defined adF")
 };
 
