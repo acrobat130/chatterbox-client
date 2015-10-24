@@ -13,6 +13,9 @@ app.init = function (){
     //   console.log('this', this);
     //   $(this).append("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
     // })
+
+  // save username that user inputs in prompt
+  app.username = window.location.search.substr(10);
 };
 
 app.send = function (data){
@@ -123,11 +126,13 @@ app.addFriend = function(){
 app.handleSubmit = function(event) {
   // event.preventDefault();
   //console.log($('#sendToAll').val())
+  // console.log(window.location.search.substr(10))
   var message = {
     username: app.username || 'Anonymous',
     text: $('#sendToAll').val(),
     roomname: app.roomname || 'lobby'
   }
+
 
   $('#sendToAll').val('');
   app.send(message);
