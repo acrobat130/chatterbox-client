@@ -60,7 +60,7 @@ describe('chatterbox', function() {
       it('should submit a GET request via $.ajax', function(done){
         app.fetch();
         expect($.ajax.calledOnce).to.be.true;
-        // debugger; 
+        // debugger;
         ajaxUrl = typeof $.ajax.args[0][0] === 'string' ? $.ajax.args[0][0] : $.ajax.args[0][0].url;
         expect(ajaxUrl).to.equal(app.server);
         done();
@@ -82,7 +82,7 @@ describe('chatterbox', function() {
           roomname: 'lobby'
         };
 
-        app.addMessage(message);
+        app.addMessagesFromFetch(message);
 
         expect($('#chats').children().length).to.equal(1);
       });
@@ -99,7 +99,7 @@ describe('chatterbox', function() {
       it('should add a friend upon clicking their username', function(){
         sinon.spy(app, 'addFriend');
 
-        app.addMessage({
+        app.addMessagesFromFetch({
           username: 'Mel Brooks',
           text: 'I didn\'t get a harumph outa that guy.!',
           roomname: 'lobby'
