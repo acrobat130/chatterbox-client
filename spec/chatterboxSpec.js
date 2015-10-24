@@ -76,15 +76,15 @@ describe('chatterbox', function() {
       });
 
       it('should be able to add messages to the DOM', function(){
-        var message = {
+        var message = [{
           username: 'Mel Brooks',
           text: 'Never underestimate the power of the Schwartz!',
           roomname: 'lobby'
-        };
-
+        }];
+ // debugger;
         app.addMessagesFromFetch(message);
 
-        expect($('#chats').children().length).to.equal(1);
+        expect($('#chats').children().length).to.equal(1*2);
       });
 
       it('should be able to add rooms to the DOM', function(){
@@ -107,7 +107,7 @@ describe('chatterbox', function() {
 
         app.init();
 
-        $('#main').find('.username').trigger('click');
+        $('#main').find('.userClick').trigger('click');
         expect(app.addFriend.called).to.be.true;
 
         app.addFriend.restore();
