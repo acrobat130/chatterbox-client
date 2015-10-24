@@ -6,6 +6,8 @@ app.init = function (){
     this.fetch();
     $(".username").on('click', this.addFriend);
     $("#send .submit").on('submit', this.handleSubmit);
+      setInterval(app.fetch.bind(app), 5000);
+
     // $(' .userClick').on('click', function(){
     //   console.log('this', this);
     //   $(this).append("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
@@ -38,7 +40,7 @@ app.send = function (data){
 
 app.fetch = function(){
   // $.get('https://api.parse.com/1/classes/chatterbox');
-  //console.log("hello")
+  console.log("hello")
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: this.server,
@@ -132,4 +134,6 @@ $(document).ready(function(){
   })
 
 });
+
+
 
