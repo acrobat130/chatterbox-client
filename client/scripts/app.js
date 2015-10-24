@@ -16,6 +16,7 @@ app.init = function (){
 };
 
 app.send = function (data){
+      console.log("addMessage inside send function")
   var thisInstance = this;
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
@@ -25,7 +26,6 @@ app.send = function (data){
     contentType: 'application/json',
     success: function (data) {
       app.addMessagesFromFetch(data);
-      console.log("addMessage inside send function")
       // debugger;
 
       console.log('chatterbox: Message sent');
@@ -57,6 +57,7 @@ app.fetch = function(){
         // if (userResultsArray[i].username !== undefined && userResultsArray[i].text !== undefined){
           // app.addMessage(userResultsArray[i]);
           app.addMessagesFromFetch(data.results);
+          console.log(data.results)
           //console.log("data", data, "data.results", data.results);
         // }
       // }
@@ -119,7 +120,17 @@ app.addFriend = function(){
   console.log("Defined adF")
 };
 
-app.handleSubmit = function() {
+app.handleSubmit = function(event) {
+  // event.preventDefault();
+  //console.log($('#sendToAll').val())
+  var message = {
+    username: app.username,
+    text: $('#sendToAll').val(),
+    roomname: app.roomname || 'lobby'
+  }
+
+  $('#sendToAll').val('');
+  app.send(message);
 
 };
 $(document).ready(function(){
@@ -133,11 +144,31 @@ $(document).ready(function(){
   //   console.log("this", this)
   // });
 
+  // opens up form to send message when user clicks on username
   $('#chats').on('click', '.userClick', function(){
       console.log('userClick')
       app.addFriend();
-    $('#main').prepend("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
+    $('#send').prepend("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
   });
+
+  // posts message to chatterbox from input box
+  $('#sendToAll').keypress(function(key) {
+    if (key.which === 13) {
+      app.handleSubmit();
+      return false;
+    }
+  })
+
+  // TODO: this isn't binding to submit or enter keystroke yet
+  // $('input').submit(messageText, function(messageText){
+  // // $('input').keypress(function(message, key) {
+  //   // if keypress is the enter key,
+  //   console.log('inside submit event handler')
+  //     app.send(message);
+  //     // prevents keystroke from continuing
+  //     return false;
+  //   // }
+  // })
 
 });
 

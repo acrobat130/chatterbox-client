@@ -20,6 +20,7 @@ body {
     font-size: 35px;
     margin-bottom: 5px;
     padding: 5px;
+    text-align: center;
 }
 
 #main h1 span {
@@ -54,7 +55,7 @@ form {
 
 form input[type=text] {
     margin-right: 10px;
-    width: 70%;
+    width: 100%;
     font-size: 12px;
     padding: 5px;
 }
@@ -84,6 +85,21 @@ form input[type=text] {
 }
 
 .personalConvo {
-    position: relative;
     float: right;
+}
+
+#main label {
+    text-align: right;
+}
+
+#sendMessageToAll {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+#main #sendToAll {
+    margin: 0 auto;
+    display: block;
+    width: 50%;
 }
