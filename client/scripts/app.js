@@ -21,7 +21,8 @@ app.send = function (data){
     data: JSON.stringify(data),
     contentType: 'application/json',
     success: function (data) {
-      app.addMessage(message);
+      app.addMessagesFromFetch(data);
+      console.log("addMessage inside send function")
       // debugger;
 
       console.log('chatterbox: Message sent');
@@ -37,7 +38,7 @@ app.send = function (data){
 
 app.fetch = function(){
   // $.get('https://api.parse.com/1/classes/chatterbox');
-  console.log("hello")
+  //console.log("hello")
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: this.server,
@@ -45,17 +46,17 @@ app.fetch = function(){
     // data: JSON.parse(),
     contentType: 'application/json',
     dataType: 'json',
-    success: function (data,status, jqxhr) {
-/*      console.log('chatterbox: Request sent');
-      console.log('data', data);
-*/    var userResultsArray = data.results;
-      // debugger;
-      for (var i = 0; i < userResultsArray.length; i++) {
-        if (userResultsArray[i].username !== undefined && userResultsArray[i].text !== undefined){
-          // debugger;
-          app.addMessage(userResultsArray[i]);
-        }
-      }
+    success: function (data) {
+      // app.addNewMessagesFromFetch(data);
+
+      // var userResultsArray = data.results;
+      // for (var i = 0; i < userResultsArray.length; i++) {
+        // if (userResultsArray[i].username !== undefined && userResultsArray[i].text !== undefined){
+          // app.addMessage(userResultsArray[i]);
+          app.addMessagesFromFetch(data.results);
+          //console.log("data", data, "data.results", data.results);
+        // }
+      // }
     },
     error: function (data, errorMessage) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -65,6 +66,10 @@ app.fetch = function(){
   });
   // debugger;
 };
+
+// app.addNewMessagesFromFetch = function(data) {
+
+// }
 
 app.clearMessages = function () {
   $('#chats').children().remove()
@@ -76,15 +81,30 @@ app.makeHTMLelement = function(message) {
   var $uMessage = $("<div id = 'text'>").text(message.text);
   var $fullMessage = $('#chats').append($uName, $uMessage);
   return $fullMessage;
-}
-
-app.addMessage = function (messageAdded) {
-  var $HTMLelement = app.makeHTMLelement(messageAdded);
-  console.log("prepending");
-  $('#chats').prepend($HTMLelement);
-  // $('#chats').append("<div>" + messageAdded + "</div>");
-  // this.init();
 };
+
+app.addMessagesFromFetch = function (dataResultsFromFetch) {
+  //console.log(dataResultsFromFetch.length)
+  for (var i = 0; i < dataResultsFromFetch.length; i++) {
+    if (app.testForNewMessages(dataResultsFromFetch[i]) === true){
+      var $HTMLelement = app.makeHTMLelement(dataResultsFromFetch[i]);
+      $('#chats').prepend($HTMLelement);
+    }
+    //console.log("prepending");
+    // $('#chats').append("<div>" + messageAdded + "</div>");
+    // this.init();
+  }
+};
+
+app.onScreenMessageStorage = {};
+
+app.testForNewMessages = function(messageFromAddMessages) {
+    // console.log(app.onScreenMessageStorage)
+  if (!app.onScreenMessageStorage[messageFromAddMessages.objectId]) {
+    app.onScreenMessageStorage[messageFromAddMessages.objectId] = true;
+    return true;
+  }
+}
 
 app.addRoom = function (room) {
   $('#roomSelect').append("<div>" /*+ room + */ +"</div>");
