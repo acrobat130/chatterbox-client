@@ -4,7 +4,8 @@ var app = {
 };
 app.init = function (){
     this.fetch();
-    $(".username").on('click', this.addFriend);
+
+
     $("#send .submit").on('submit', this.handleSubmit);
       setInterval(app.fetch.bind(app), 5000);
 
@@ -128,10 +129,15 @@ $(document).ready(function(){
     app.fetch();
   });
 
-  $('.userClick').on('click', function(){
-    console.log("this", this)
-    $(this).append("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
-  })
+  // $('.userClick').on('click', function(){
+  //   console.log("this", this)
+  //   $(this).append("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
+  // });
+
+  $('#chats').on('click', '.userClick', function(){
+      console.log('userClick')
+      app.addFriend();
+  });
 
 });
 
