@@ -124,7 +124,7 @@ app.handleSubmit = function(event) {
   // event.preventDefault();
   //console.log($('#sendToAll').val())
   var message = {
-    username: app.username,
+    username: app.username || 'Anonymous',
     text: $('#sendToAll').val(),
     roomname: app.roomname || 'lobby'
   }
