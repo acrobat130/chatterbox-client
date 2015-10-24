@@ -91,9 +91,9 @@ app.makeHTMLelement = function(message) {
 };
 
 app.addMessagesFromFetch = function (dataResultsFromFetch) {
-  //console.log(dataResultsFromFetch.length)
   for (var i = 0; i < dataResultsFromFetch.length; i++) {
     if (app.testForNewMessages(dataResultsFromFetch[i]) === true){
+  console.log("dataResultsFromFetch",dataResultsFromFetch.length)
       var $HTMLelement = app.makeHTMLelement(dataResultsFromFetch[i]);
       $('#chats').prepend($HTMLelement);
     }
@@ -124,7 +124,8 @@ app.addFriend = function(){
 };
 
 app.handleSubmit = function(event) {
-  // event.preventDefault();
+  // debugger;
+  event.preventDefault();
   //console.log($('#sendToAll').val())
   // console.log(window.location.search.substr(10))
   var message = {
@@ -138,6 +139,20 @@ app.handleSubmit = function(event) {
   app.send(message);
 
 };
+
+app.handleMessageSubmit = function(event) {
+  // event.preventDefault();
+  var message = {
+    username: app.username || 'Anonymous',
+    text: $('.privateMessage').val(),
+    roomname: app.roomname || 'lobby'
+  }
+
+  $('.privateMessage').val('');
+  app.send(message);
+
+};
+
 $(document).ready(function(){
   app.init();
 
@@ -153,7 +168,7 @@ $(document).ready(function(){
   $('#chats').on('click', '.userClick', function(){
       console.log('userClick')
       app.addFriend();
-    $('#send').prepend("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
+    $('#send').prepend("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input class='privateMessage' type='text' size='10'></input><p></form>");
   });
 
   // posts message to chatterbox from input box
@@ -164,16 +179,20 @@ $(document).ready(function(){
     }
   })
 
-  // TODO: this isn't binding to submit or enter keystroke yet
-  // $('input').submit(messageText, function(messageText){
-  // // $('input').keypress(function(message, key) {
-  //   // if keypress is the enter key,
-  //   console.log('inside submit event handler')
-  //     app.send(message);
-  //     // prevents keystroke from continuing
-  //     return false;
-  //   // }
-  // })
+  // TODO: private messages are currently posted on general forum, should be to a specific person
+  $('#send').on('keypress', '.privateMessage', function(e) {
+    // console.log('inside keypress e', e.which)
+    // debugger;
+    // if keypress is the enter key,
+    if (e.which === 13) {
+      console.log('handleMessageSubmit',app.handleMessageSubmit)
+      // debugger;
+    // console.log('inside submit event handler')
+      app.handleMessageSubmit();
+      // prevents keystroke from continuing
+      return false;
+    }
+  })
 
 });
 
