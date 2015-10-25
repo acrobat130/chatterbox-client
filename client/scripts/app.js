@@ -2,37 +2,34 @@
 var app = {
   server: 'https://api.parse.com/1/classes/chatterbox'
 };
+
+// document ready runs this function
 app.init = function (){
+    // fetches new message when page loads
     this.fetch();
 
-
+    // doesn't add functionality to page, just used to pass mocha test
     $("#send .submit").on('submit', this.handleSubmit);
       setInterval(app.fetch.bind(app), 5000);
 
-    // $(' .userClick').on('click', function(){
-    //   console.log('this', this);
-    //   $(this).append("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input type='text' size='10'></input><p></form>");
-    // })
-
   // save username that user inputs in prompt
+  // username starts at index 10 of the search property
   app.username = window.location.search.substr(10);
 };
 
+// function that sends messages to server
 app.send = function (data){
-      console.log("addMessage inside send function")
-  var thisInstance = this;
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: this.server,
     type: 'POST',
+    // stringify data when sending, parse data when receiving
     data: JSON.stringify(data),
     contentType: 'application/json',
+    // success function automatically run when data is successfully sent
     success: function (data) {
       app.addMessagesFromFetch(data);
-      // debugger;
-
       console.log('chatterbox: Message sent');
-      console.log('chatterbox', data);
     },
     error: function (data) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -43,156 +40,151 @@ app.send = function (data){
 };
 
 app.fetch = function(){
-  // $.get('https://api.parse.com/1/classes/chatterbox');
-  console.log("hello")
   $.ajax({
     // This is the url you should use to communicate with the parse API server.
     url: this.server,
     type: 'GET',
     // data: JSON.parse(),
+    // by specifying the contentType below, it should automatically parse the JSON
     contentType: 'application/json',
     dataType: 'json',
     success: function (data) {
-      // app.addNewMessagesFromFetch(data);
-
-      // var userResultsArray = data.results;
-      // for (var i = 0; i < userResultsArray.length; i++) {
-        // if (userResultsArray[i].username !== undefined && userResultsArray[i].text !== undefined){
-          // app.addMessage(userResultsArray[i]);
-          app.addMessagesFromFetch(data.results);
-          console.log(data.results)
-          //console.log("data", data, "data.results", data.results);
-        // }
-      // }
+      // runs this function automatically when data is successfully fetched
+      app.addMessagesFromFetch(data.results);
+      console.log('chatterbox: Message fetched');
     },
     error: function (data, errorMessage) {
       // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
       console.error('chatterbox: Failed to fetch message');
-      console.log('errorMessage', errorMessage)
+      console.log('errorMessage', errorMessage);
     }
   });
-  // debugger;
 };
 
-// app.addNewMessagesFromFetch = function(data) {
-
-// }
-
+// removes chat messages
 app.clearMessages = function () {
   $('#chats').children().remove()
 };
 
+// storage object for messages shown on screen
+app.onScreenMessageStorage = {};
+
+// takes data from fetch and adds messages to DOM
+app.addMessagesFromFetch = function (dataResultsFromFetch) {
+  // for each data result (message) in fetch,
+  for (var i = 0; i < dataResultsFromFetch.length; i++) {
+    // if the message isn't already on the page, (test with helper function)
+    if (app.testForNewMessages(dataResultsFromFetch[i]) === true){
+      // turn message into HTML element with helper function
+      var $HTMLelement = app.makeHTMLelement(dataResultsFromFetch[i]);
+      $('#chats').prepend($HTMLelement);
+    }
+  }
+};
+
+// helper function for addMessagesFromFetch that tests to see if one message is already on screen
+app.testForNewMessages = function(messageFromAddMessages) {
+  // if onScreenMessageStorage doesn't have objectId of new message,
+  if (!app.onScreenMessageStorage[messageFromAddMessages.objectId]) {
+    // add objectId to onScreenMessageStorage object
+    app.onScreenMessageStorage[messageFromAddMessages.objectId] = true;
+    return true;
+  }
+};
+
+// helper function for addMessagesFromFetch that creates the HTML element
 app.makeHTMLelement = function(message) {
+  // makes username <a> tag and appends to new <div> tag
   var $uName = $("<div class = 'username'>").append(
       $("<a class = 'userClick' href = '#'>").text(message.username));
+  // makes new <div> tag to hold message text
   var $uMessage = $("<div id = 'text'>").text(message.text);
+  // creates whole message
   var $fullMessage = $('#chats').append($uName, $uMessage);
   return $fullMessage;
 };
 
-app.addMessagesFromFetch = function (dataResultsFromFetch) {
-  for (var i = 0; i < dataResultsFromFetch.length; i++) {
-    if (app.testForNewMessages(dataResultsFromFetch[i]) === true){
-  console.log("dataResultsFromFetch",dataResultsFromFetch.length)
-      var $HTMLelement = app.makeHTMLelement(dataResultsFromFetch[i]);
-      $('#chats').prepend($HTMLelement);
-    }
-    //console.log("prepending");
-    // $('#chats').append("<div>" + messageAdded + "</div>");
-    // this.init();
-  }
-};
-
-app.onScreenMessageStorage = {};
-
-app.testForNewMessages = function(messageFromAddMessages) {
-    // console.log(app.onScreenMessageStorage)
-  if (!app.onScreenMessageStorage[messageFromAddMessages.objectId]) {
-    app.onScreenMessageStorage[messageFromAddMessages.objectId] = true;
-    return true;
-  }
-}
-
+//TODO: enable room functionality
+// adds room <div>, used to pass tests, rooms not enabled in app yet
 app.addRoom = function (room) {
   $('#roomSelect').append("<div>" /*+ room + */ +"</div>");
-
 };
 
+//TODO: enable addFriend functionality
+// used to pass tests, addFriend functionality not enabled in app yet
 app.addFriend = function(){
-  // return true;
-  console.log("Defined adF")
+  //console.log("Defined addFriend")
 };
 
+// handles submit for static input box on page
 app.handleSubmit = function(event) {
-  // debugger;
-  event.preventDefault();
-  //console.log($('#sendToAll').val())
-  // console.log(window.location.search.substr(10))
+  // event.preventDefault(); // functionality breaks when this is enabled
+  // assigns message properties
   var message = {
     username: app.username || 'Anonymous',
     text: $('#sendToAll').val(),
     roomname: app.roomname || 'lobby'
   }
 
-
+  // makes input field blank after submitting
   $('#sendToAll').val('');
+  // sends message to server
   app.send(message);
-
 };
 
+// handles submit for dynamic input box on page
 app.handleMessageSubmit = function(event) {
-  // event.preventDefault();
+  // event.preventDefault(); // functionality breaks when this is enabled
+  // assigns message properties
   var message = {
     username: app.username || 'Anonymous',
     text: $('.privateMessage').val(),
     roomname: app.roomname || 'lobby'
   }
 
+  // make input field blank after submitting
   $('.privateMessage').val('');
+  // sends message to server
   app.send(message);
-
 };
 
+// after document has loaded, run these functions
 $(document).ready(function(){
   app.init();
 
+  // fetches data when refresh button is clicked
   $('#refreshButton').on('click', function() {
     app.fetch();
   });
 
-  // $('.userClick').on('click', function(){
-  //   console.log("this", this)
-  // });
-
   // opens up form to send message when user clicks on username
   $('#chats').on('click', '.userClick', function(){
-      console.log('userClick')
-      app.addFriend();
+    // adds friend
+    app.addFriend();
+    // opens up form to type private message
     $('#send').prepend("<form class='personalConvo'><p><label>Type to your heart\'s content!</label><input class='privateMessage' type='text' size='10'></input><p></form>");
   });
 
-  // posts message to chatterbox from input box
+  // posts message to chatterbox from static input box when enter is hit
   $('#sendToAll').keypress(function(key) {
+    // enter is key 13
     if (key.which === 13) {
       app.handleSubmit();
+      // prevent keystroke from continuing
       return false;
     }
-  })
+  });
 
   // TODO: private messages are currently posted on general forum, should be to a specific person
+  // posts message to overall chatterbox when enter key is hit
   $('#send').on('keypress', '.privateMessage', function(e) {
-    // console.log('inside keypress e', e.which)
-    // debugger;
     // if keypress is the enter key,
     if (e.which === 13) {
-      console.log('handleMessageSubmit',app.handleMessageSubmit)
-      // debugger;
-    // console.log('inside submit event handler')
       app.handleMessageSubmit();
       // prevents keystroke from continuing
       return false;
     }
-  })
+  });
 
 });
 
